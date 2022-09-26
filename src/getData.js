@@ -36,17 +36,33 @@ async function getNumberofContributors(repo) {
   return numberOfContributors;
 }
 
+async function getLicense(repo) {
+  const ghRes = await ghRequest(
+    `https://api.github.com/repos/${repo}/community/profile`
+  );
+  const ghData = await ghRes.json();
+  const { files } = ghData;
+
+  if (Object.hasOwn(files, "license")) {
+    return JSON.stringify(files.license, null, 2);
+  } else {
+    return "No license found";
+  }
+}
+
 export async function getData(pkgName) {
   const pkg = encodeURIComponent(pkgName);
   const repository = await getGithubRepository(pkg);
   const repo = getOwnerAndRepository(repository);
   const lastCommit = await getLastCommit(repo);
   const numberOfContributors = await getNumberofContributors(repo);
+  const license = await getLicense(repo);
 
   const data = {
     repository,
     lastCommit,
     numberOfContributors,
+    license,
   };
 
   return data;
