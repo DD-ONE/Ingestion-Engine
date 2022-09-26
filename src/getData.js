@@ -1,24 +1,25 @@
-import fetch from "node-fetch";
+import { ghRequest } from "./utils.js";
 
 async function getGithubRepository(pkg) {
-  const ghRes = await fetch(`https://api.npms.io/v2/package/${pkg}`);
+  const ghRes = await ghRequest(`https://api.npms.io/v2/package/${pkg}`);
   const ghData = await ghRes.json();
   return ghData.collected.metadata.links.repository;
 }
 
-async function getLastCommit(repository) {
+function getOwnerAndRepository(repository) {
   // repository sample https://github.com/facebook/react
-  const repo = repository.replace("https://github.com/", "");
-  const ghRes = await fetch(`https://api.github.com/repos/${repo}/commits`);
+  return repository.replace("https://github.com/", "");
+}
+
+async function getLastCommit(repo) {
+  const ghRes = await ghRequest(`https://api.github.com/repos/${repo}/commits`);
   const ghData = await ghRes.json();
   const date = ghData[0].commit.author.date;
   return new Date(date);
 }
 
-async function getNumberofContributors(repository) {
-  // repository sample https://github.com/facebook/react
-  const repo = repository.replace("https://github.com/", "");
-  const ghRes = await fetch(
+async function getNumberofContributors(repo) {
+  const ghRes = await ghRequest(
     `https://api.github.com/repos/${repo}/contributors?per_page=1&anon=true`
   );
 
@@ -38,8 +39,9 @@ async function getNumberofContributors(repository) {
 export async function getData(pkgName) {
   const pkg = encodeURIComponent(pkgName);
   const repository = await getGithubRepository(pkg);
-  const lastCommit = await getLastCommit(repository);
-  const numberOfContributors = await getNumberofContributors(repository);
+  const repo = getOwnerAndRepository(repository);
+  const lastCommit = await getLastCommit(repo);
+  const numberOfContributors = await getNumberofContributors(repo);
 
   const data = {
     repository,
