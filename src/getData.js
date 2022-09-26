@@ -18,7 +18,7 @@ async function getLastCommit(repo) {
   return new Date(date);
 }
 
-async function getNumberofContributors(repo) {
+async function getNumberOfContributors(repo) {
   const ghRes = await ghRequest(
     `https://api.github.com/repos/${repo}/contributors?per_page=1&anon=true`
   );
@@ -50,18 +50,38 @@ async function getLicense(repo) {
   }
 }
 
+async function getNumberOfCommits(repo) {
+  const ghRes = await ghRequest(
+    `https://api.github.com/repos/${repo}/commits?per_page=1`
+  );
+
+  // <https://api.github.com/repositories/10270250/commits?per_page=1&page=2>; rel="next", <https://api.github.com/repositories/10270250/commits?per_page=1&page=15221>; rel="last""
+
+  const linkHeader = ghRes.headers.get("link");
+  const linkHeaderStr = linkHeader
+    .split(",")
+    .find((link) => link.includes("last"));
+  const lastPageUrl = linkHeaderStr.match(/<.*page=(\d+).*>/)[0].slice(1, -1);
+
+  const numberOfCommits = new URLSearchParams(lastPageUrl).get("page");
+
+  return numberOfCommits;
+}
+
 export async function getData(pkgName) {
   const pkg = encodeURIComponent(pkgName);
   const repository = await getGithubRepository(pkg);
   const repo = getOwnerAndRepository(repository);
   const lastCommit = await getLastCommit(repo);
-  const numberOfContributors = await getNumberofContributors(repo);
+  const numberOfContributors = await getNumberOfContributors(repo);
+  const numberOfCommits = await getNumberOfCommits(repo);
   const license = await getLicense(repo);
 
   const data = {
     repository,
     lastCommit,
     numberOfContributors,
+    numberOfCommits,
     license,
   };
 

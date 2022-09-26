@@ -8,11 +8,16 @@ const argv = yargs(hideBin(process.argv)).argv;
 
 const pkg = argv.pkg;
 
-const { repository, lastCommit, numberOfContributors, license } = await getData(
-  pkg
-);
+const {
+  repository,
+  lastCommit,
+  numberOfContributors,
+  numberOfCommits,
+  license,
+} = await getData(pkg);
 
 console.log(`Repository: ${repository}
 Last commit: ${lastCommit}
 Number of contributors: ${numberOfContributors}
+Number of commits: ${numberOfCommits}
 License: ${license}`);
