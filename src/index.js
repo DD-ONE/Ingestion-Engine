@@ -2,7 +2,7 @@
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
 
-import { getData } from "../src/getData.js";
+import { getData } from "./getData.js";
 
 const argv = yargs(hideBin(process.argv)).argv;
 
