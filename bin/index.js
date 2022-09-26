@@ -13,6 +13,7 @@ const {
   lastCommit,
   numberOfContributors,
   numberOfCommits,
+  lastRelease,
   license,
 } = await getData(pkg);
 
@@ -20,4 +21,5 @@ console.log(`Repository: ${repository}
 Last commit: ${lastCommit}
 Number of contributors: ${numberOfContributors}
 Number of commits: ${numberOfCommits}
+Last Release: "${lastRelease}"
 License: ${license}`);

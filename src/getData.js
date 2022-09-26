@@ -68,6 +68,19 @@ async function getNumberOfCommits(repo) {
   return numberOfCommits;
 }
 
+async function getLastRelease(repo) {
+  const ghRes = await ghRequest(
+    `https://api.github.com/repos/${repo}/releases?per_page=1`
+  );
+  const ghData = await ghRes.json();
+
+  if (ghData.length > 0) {
+    return ghData[0].name;
+  } else {
+    return "No release found";
+  }
+}
+
 export async function getData(pkgName) {
   const pkg = encodeURIComponent(pkgName);
   const repository = await getGithubRepository(pkg);
@@ -75,6 +88,7 @@ export async function getData(pkgName) {
   const lastCommit = await getLastCommit(repo);
   const numberOfContributors = await getNumberOfContributors(repo);
   const numberOfCommits = await getNumberOfCommits(repo);
+  const lastRelease = await getLastRelease(repo);
   const license = await getLicense(repo);
 
   const data = {
@@ -82,6 +96,7 @@ export async function getData(pkgName) {
     lastCommit,
     numberOfContributors,
     numberOfCommits,
+    lastRelease,
     license,
   };
 
