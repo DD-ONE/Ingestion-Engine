@@ -35,7 +35,8 @@ async function getNumberofContributors(repository) {
   return numberOfContributors;
 }
 
-export async function getData(pkg) {
+export async function getData(pkgName) {
+  const pkg = encodeURIComponent(pkgName);
   const repository = await getGithubRepository(pkg);
   const lastCommit = await getLastCommit(repository);
   const numberOfContributors = await getNumberofContributors(repository);
