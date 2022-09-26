@@ -3,11 +3,17 @@
 ## Usage
 
 ```bash
-node .\src\index.js --pkg npm-package-name
+npm install
 ```
 
 ```bash
-node .\src\index.js --pkg=npm-package-name
+node ./src/index.js --pkg npm-package-name
+```
+
+or
+
+```bash
+node ./src/index.js --pkg=npm-package-name
 ```
 
 ## Rate limit
