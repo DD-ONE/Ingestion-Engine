@@ -8,4 +8,7 @@ const argv = yargs(hideBin(process.argv)).argv;
 
 const pkg = argv.pkg;
 
-console.log(await getData(pkg));
+const { repository, lastCommit } = await getData(pkg);
+
+console.log(`Repository: ${repository}
+Last commit: ${lastCommit}`);
